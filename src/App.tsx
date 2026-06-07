@@ -1720,7 +1720,7 @@ function DocumentPane({
   return (
     <div
       ref={contentRef}
-      className="flex-1 overflow-y-auto p-4 lg:px-6 lg:pt-0 lg:pb-12 scroll-smooth h-full bg-transparent flex justify-center"
+      className="flex-1 overflow-y-auto p-4 lg:px-6 lg:pt-0 lg:pb-12 h-full bg-transparent flex justify-center"
     >
       <div
         className={`w-full max-w-4xl h-full pt-0 pb-20 mt-4 flex flex-col transition-all duration-500 ease-in-out`}
@@ -2518,7 +2518,7 @@ const scrollToElement = (
 
     const isArticle = elementId.includes("-art-");
     let isExpanded: Element | null = null;
-    if (isArticle) {
+    if (isArticle && markTarget) {
       isExpanded = el.querySelector(".overflow-hidden");
       if (!isExpanded) {
         if (Date.now() - startTime < maxWaitMs) {
@@ -3176,8 +3176,40 @@ export default function App() {
       setIsSxkdExpanded(false);
     }
 
+    let targetType = type;
+    let targetId = id;
+    
+    if (type === "chapter") {
+      let docData: any = null;
+      if (docId === "luat") docData = DOCUMENTS[0];
+      else if (docId === "nd214") docData = nghiDinh214Data;
+      else if (docId === "tt79") docData = thongTu79Data;
+      else if (docId === "luatDienLuc") docData = luatDienLucData;
+      else if (docId === "nd18") docData = nghiDinh18Data;
+      else if (docId === "tt42") docData = thongTu42Data;
+      
+      if (docData) {
+        const chapter = docData.chapters.find((c: any) => c.id === id);
+        if (chapter) {
+          if (chapter.articles && chapter.articles.length > 0) {
+            targetType = "art" as any;
+            targetId = chapter.articles[0].id;
+          } else if (chapter.sections && chapter.sections.length > 0) {
+            const section = chapter.sections[0];
+            if (section.articles && section.articles.length > 0) {
+              targetType = "art" as any;
+              targetId = section.articles[0].id;
+            } else {
+              targetType = "section";
+              targetId = section.id;
+            }
+          }
+        }
+      }
+    }
+
     // Scroll to the element
-    scrollToElement(`${docId}-${type}-${id}`, "start");
+    scrollToElement(`${docId}-${targetType}-${targetId}`, "start", 1500, undefined, "auto");
   };
 
   const executeScroll = (
@@ -4354,55 +4386,33 @@ export default function App() {
                                   chapter.id,
                                 );
                                 return (
-                                  <div key={chapter.id} className="space-y-0.5">
+                                  <div key={chapter.id} className="mb-1.5">
                                     <button
                                       onClick={() => handleSelectDl(chapter.id)}
-                                      className={`w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold transition-colors ${
-                                        isSelected
-                                          ? "bg-deep-yellow/10 text-deep-yellow-dark"
-                                          : "text-ink-600 hover:bg-black/5"
+                                      className={`w-full text-left pr-8 pl-2 py-2 rounded-xl text-[11px] transition-all duration-300 flex items-center gap-2 group relative ${
+                                        isSelected && !effectiveDlSearch
+                                          ? "bg-yellow-400 text-slate-900 font-bold shadow-md shadow-yellow-400/40"
+                                          : "text-ink-800 hover:bg-ink-900/5 font-semibold"
                                       }`}
                                     >
-                                      {chapter.title}
+                                      <span className="text-[11px] tracking-tight leading-snug whitespace-normal break-words py-0.5">
+                                        {chapter.title.split(":")[0] || chapter.title}
+                                      </span>
+                                      <div
+                                        className="absolute right-1 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-black/10 rounded-md text-slate-500 hover:text-blue-700"
+                                        onClick={(e) =>
+                                          handleScrollTo(
+                                            e,
+                                            "luatDienLuc",
+                                            "chapter",
+                                            chapter.id,
+                                          )
+                                        }
+                                        title="Chuyển đến"
+                                      >
+                                        <Target size={14} />
+                                      </div>
                                     </button>
-
-                                    <AnimatePresence>
-                                      {isSelected &&
-                                        getChapterArticles(chapter).length >
-                                          0 && (
-                                          <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{
-                                              height: "auto",
-                                              opacity: 1,
-                                            }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            className="pl-3 space-y-0.5 overflow-hidden border-l border-ink-900/10 ml-4 py-1"
-                                          >
-                                            {getChapterArticles(chapter).map(
-                                              (article: any) => (
-                                                <button
-                                                  key={article.id}
-                                                  onClick={() =>
-                                                    handleSelectDl(
-                                                      chapter.id,
-                                                      article.id,
-                                                    )
-                                                  }
-                                                  className={`w-full text-left px-3 py-2 rounded-lg text-[11px] font-medium transition-colors line-clamp-2 ${
-                                                    expandedDlArticleId ===
-                                                    article.id
-                                                      ? "bg-deep-yellow text-white"
-                                                      : "text-ink-500 hover:bg-ink-900/5"
-                                                  }`}
-                                                >
-                                                  {article.title}
-                                                </button>
-                                              ),
-                                            )}
-                                          </motion.div>
-                                        )}
-                                    </AnimatePresence>
                                   </div>
                                 );
                               })}
@@ -4510,57 +4520,33 @@ export default function App() {
                                   chapter.id,
                                 );
                                 return (
-                                  <div key={chapter.id} className="space-y-0.5">
+                                  <div key={chapter.id} className="mb-1.5">
                                     <button
-                                      onClick={() =>
-                                        handleSelectNd18(chapter.id)
-                                      }
-                                      className={`w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold transition-colors ${
-                                        isSelected
-                                          ? "bg-deep-yellow/10 text-deep-yellow-dark"
-                                          : "text-ink-600 hover:bg-black/5"
+                                      onClick={() => handleSelectNd18(chapter.id)}
+                                      className={`w-full text-left pr-8 pl-2 py-2 rounded-xl text-[11px] transition-all duration-300 flex items-center gap-2 group relative ${
+                                        isSelected && !effectiveNd18Search
+                                          ? "bg-yellow-400 text-slate-900 font-bold shadow-md shadow-yellow-400/40"
+                                          : "text-ink-800 hover:bg-ink-900/5 font-semibold"
                                       }`}
                                     >
-                                      {chapter.title}
+                                      <span className="text-[11px] tracking-tight leading-snug whitespace-normal break-words py-0.5">
+                                        {chapter.title.split(":")[0] || chapter.title}
+                                      </span>
+                                      <div
+                                        className="absolute right-1 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-black/10 rounded-md text-slate-500 hover:text-blue-700"
+                                        onClick={(e) =>
+                                          handleScrollTo(
+                                            e,
+                                            "nd18",
+                                            "chapter",
+                                            chapter.id,
+                                          )
+                                        }
+                                        title="Chuyển đến"
+                                      >
+                                        <Target size={14} />
+                                      </div>
                                     </button>
-
-                                    <AnimatePresence>
-                                      {isSelected &&
-                                        getChapterArticles(chapter).length >
-                                          0 && (
-                                          <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{
-                                              height: "auto",
-                                              opacity: 1,
-                                            }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            className="pl-3 space-y-0.5 overflow-hidden border-l border-ink-900/10 ml-4 py-1"
-                                          >
-                                            {getChapterArticles(chapter).map(
-                                              (article: any) => (
-                                                <button
-                                                  key={article.id}
-                                                  onClick={() =>
-                                                    handleSelectNd18(
-                                                      chapter.id,
-                                                      article.id,
-                                                    )
-                                                  }
-                                                  className={`w-full text-left px-3 py-2 rounded-lg text-[11px] font-medium transition-colors line-clamp-2 ${
-                                                    expandedNd18ArticleId ===
-                                                    article.id
-                                                      ? "bg-deep-yellow text-white"
-                                                      : "text-ink-500 hover:bg-ink-900/5"
-                                                  }`}
-                                                >
-                                                  {article.title}
-                                                </button>
-                                              ),
-                                            )}
-                                          </motion.div>
-                                        )}
-                                    </AnimatePresence>
                                   </div>
                                 );
                               })}
@@ -4668,57 +4654,33 @@ export default function App() {
                                   chapter.id,
                                 );
                                 return (
-                                  <div key={chapter.id} className="space-y-0.5">
+                                  <div key={chapter.id} className="mb-1.5">
                                     <button
-                                      onClick={() =>
-                                        handleSelectTt42(chapter.id)
-                                      }
-                                      className={`w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold transition-colors ${
-                                        isSelected
-                                          ? "bg-deep-yellow/10 text-deep-yellow-dark"
-                                          : "text-ink-600 hover:bg-black/5"
+                                      onClick={() => handleSelectTt42(chapter.id)}
+                                      className={`w-full text-left pr-8 pl-2 py-2 rounded-xl text-[11px] transition-all duration-300 flex items-center gap-2 group relative ${
+                                        isSelected && !effectiveTt42Search
+                                          ? "bg-yellow-400 text-slate-900 font-bold shadow-md shadow-yellow-400/40"
+                                          : "text-ink-800 hover:bg-ink-900/5 font-semibold"
                                       }`}
                                     >
-                                      {chapter.title}
+                                      <span className="text-[11px] tracking-tight leading-snug whitespace-normal break-words py-0.5">
+                                        {chapter.title.split(":")[0] || chapter.title}
+                                      </span>
+                                      <div
+                                        className="absolute right-1 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-black/10 rounded-md text-slate-500 hover:text-blue-700"
+                                        onClick={(e) =>
+                                          handleScrollTo(
+                                            e,
+                                            "tt42",
+                                            "chapter",
+                                            chapter.id,
+                                          )
+                                        }
+                                        title="Chuyển đến"
+                                      >
+                                        <Target size={14} />
+                                      </div>
                                     </button>
-
-                                    <AnimatePresence>
-                                      {isSelected &&
-                                        getChapterArticles(chapter).length >
-                                          0 && (
-                                          <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{
-                                              height: "auto",
-                                              opacity: 1,
-                                            }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            className="pl-3 space-y-0.5 overflow-hidden border-l border-ink-900/10 ml-4 py-1"
-                                          >
-                                            {getChapterArticles(chapter).map(
-                                              (article: any) => (
-                                                <button
-                                                  key={article.id}
-                                                  onClick={() =>
-                                                    handleSelectTt42(
-                                                      chapter.id,
-                                                      article.id,
-                                                    )
-                                                  }
-                                                  className={`w-full text-left px-3 py-2 rounded-lg text-[11px] font-medium transition-colors line-clamp-2 ${
-                                                    expandedTt42ArticleId ===
-                                                    article.id
-                                                      ? "bg-deep-yellow text-white"
-                                                      : "text-ink-500 hover:bg-ink-900/5"
-                                                  }`}
-                                                >
-                                                  {article.title}
-                                                </button>
-                                              ),
-                                            )}
-                                          </motion.div>
-                                        )}
-                                    </AnimatePresence>
                                   </div>
                                 );
                               })}
