@@ -1,0 +1,8 @@
+{
+  "name": "Remix: ra cứu Pháp luật phục vụ công tác SXKD - ĐTXD",
+  "description": "Hệ thống hỗ trợ tra cứu nhanh",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
