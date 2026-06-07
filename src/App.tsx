@@ -2630,9 +2630,9 @@ export default function App() {
   const [searchQueryTt42, setSearchQueryTt42] = useState("");
   const [activePanes, setActivePanes] = useState<
     ("luat" | "nd214" | "tt79" | "luatDienLuc" | "nd18" | "tt42")[]
-  >(["luat"]);
+  >([]);
   const [searchMode, setSearchMode] = useState<"dtxd" | "sxkd">("dtxd");
-  const [isDtxdExpanded, setIsDtxdExpanded] = useState(true);
+  const [isDtxdExpanded, setIsDtxdExpanded] = useState(false);
   const [isSxkdExpanded, setIsSxkdExpanded] = useState(false);
 
   useEffect(() => {
@@ -5154,7 +5154,7 @@ export default function App() {
           <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 p-1.5 rounded-xl shadow-lg overflow-x-auto no-scrollbar max-w-full mx-4 lg:mx-0">
             <button
               onClick={() => togglePane("luat")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border border-transparent ${activePanes.includes("luat") ? "bg-amber-400 text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-400 hover:text-slate-500 border-white/10"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border ${activePanes.includes("luat") ? "bg-amber-400 border-transparent text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-slate-200"}`}
             >
               <Gavel
                 size={16}
@@ -5169,7 +5169,7 @@ export default function App() {
             </button>
             <button
               onClick={() => togglePane("nd214")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border border-transparent ${activePanes.includes("nd214") ? "bg-amber-400 text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-400 hover:text-slate-500 border-white/10"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border ${activePanes.includes("nd214") ? "bg-amber-400 border-transparent text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-slate-200"}`}
             >
               <ClipboardCheck
                 size={16}
@@ -5184,7 +5184,7 @@ export default function App() {
             </button>
             <button
               onClick={() => togglePane("tt79")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border border-transparent ${activePanes.includes("tt79") ? "bg-amber-400 text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-400 hover:text-slate-500 border-white/10"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border ${activePanes.includes("tt79") ? "bg-amber-400 border-transparent text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-slate-200"}`}
             >
               <BookOpen
                 size={16}
@@ -5202,7 +5202,7 @@ export default function App() {
 
             <button
               onClick={() => togglePane("luatDienLuc")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border border-transparent ${activePanes.includes("luatDienLuc") ? "bg-amber-400 text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-400 hover:text-slate-500 border-white/10"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border ${activePanes.includes("luatDienLuc") ? "bg-amber-400 border-transparent text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-slate-200"}`}
             >
               <Zap
                 size={16}
@@ -5217,7 +5217,7 @@ export default function App() {
             </button>
             <button
               onClick={() => togglePane("nd18")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border border-transparent ${activePanes.includes("nd18") ? "bg-amber-400 text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-400 hover:text-slate-500 border-white/10"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border ${activePanes.includes("nd18") ? "bg-amber-400 border-transparent text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-slate-200"}`}
             >
               <FileText
                 size={16}
@@ -5232,7 +5232,7 @@ export default function App() {
             </button>
             <button
               onClick={() => togglePane("tt42")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border border-transparent ${activePanes.includes("tt42") ? "bg-amber-400 text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-400 hover:text-slate-500 border-white/10"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap flex items-center gap-1.5 border ${activePanes.includes("tt42") ? "bg-amber-400 border-transparent text-slate-900 shadow-md shadow-amber-400/20" : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-slate-200"}`}
             >
               <BookOpen
                 size={16}
