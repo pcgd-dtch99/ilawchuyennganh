@@ -2630,28 +2630,23 @@ export default function App() {
   const [searchQueryTt42, setSearchQueryTt42] = useState("");
   const [activePanes, setActivePanes] = useState<
     ("luat" | "nd214" | "tt79" | "luatDienLuc" | "nd18" | "tt42")[]
-  >([]);
+  >(["luat"]);
   const [searchMode, setSearchMode] = useState<"dtxd" | "sxkd">("dtxd");
   const [isDtxdExpanded, setIsDtxdExpanded] = useState(false);
   const [isSxkdExpanded, setIsSxkdExpanded] = useState(false);
-
-  useEffect(() => {
-    if (searchMode === "dtxd") {
-      setIsDtxdExpanded(true);
-      setIsSxkdExpanded(false);
-    } else {
-      setIsSxkdExpanded(true);
-      setIsDtxdExpanded(false);
-    }
-  }, [searchMode]);
+  const isFirstRender = useRef(true);
 
   const togglePane = (
     paneId: "luat" | "nd214" | "tt79" | "luatDienLuc" | "nd18" | "tt42",
   ) => {
     if (paneId === "luatDienLuc" || paneId === "nd18" || paneId === "tt42") {
       setSearchMode("sxkd");
+      setIsSxkdExpanded(true);
+      setIsDtxdExpanded(false);
     } else {
       setSearchMode("dtxd");
+      setIsDtxdExpanded(true);
+      setIsSxkdExpanded(false);
     }
     setActivePanes((prev) => {
       if (paneId === "luatDienLuc" || paneId === "nd18" || paneId === "tt42") {
@@ -3168,11 +3163,18 @@ export default function App() {
 
     // Rely on handleSelect* to manage activePanes correctly, so we don't duplicate logic.
     // Ensure we switch view modes properly if navigating from a different mode
-    setSearchMode(
+    const newSearchMode =
       docId === "luatDienLuc" || docId === "nd18" || docId === "tt42"
         ? "sxkd"
-        : "dtxd",
-    );
+        : "dtxd";
+    setSearchMode(newSearchMode);
+    if (newSearchMode === "sxkd") {
+      setIsSxkdExpanded(true);
+      setIsDtxdExpanded(false);
+    } else {
+      setIsDtxdExpanded(true);
+      setIsSxkdExpanded(false);
+    }
 
     // Scroll to the element
     scrollToElement(`${docId}-${type}-${id}`, "start");
@@ -4787,13 +4789,20 @@ export default function App() {
                                 | "nd18"
                                 | "tt42";
 
-                              setSearchMode(
+                              const bmSearchMode =
                                 docId === "luatDienLuc" ||
-                                  docId === "nd18" ||
-                                  docId === "tt42"
+                                docId === "nd18" ||
+                                docId === "tt42"
                                   ? "sxkd"
-                                  : "dtxd",
-                              );
+                                  : "dtxd";
+                              setSearchMode(bmSearchMode);
+                              if (bmSearchMode === "sxkd") {
+                                setIsSxkdExpanded(true);
+                                setIsDtxdExpanded(false);
+                              } else {
+                                setIsDtxdExpanded(true);
+                                setIsSxkdExpanded(false);
+                              }
 
                               if (
                                 searchQuery ||
@@ -4947,13 +4956,20 @@ export default function App() {
                                 if (n.articleId.includes("tt42"))
                                   docId = "tt42";
 
-                                setSearchMode(
+                                const noteSearchMode =
                                   docId === "luatDienLuc" ||
-                                    docId === "nd18" ||
-                                    docId === "tt42"
+                                  docId === "nd18" ||
+                                  docId === "tt42"
                                     ? "sxkd"
-                                    : "dtxd",
-                                );
+                                    : "dtxd";
+                                setSearchMode(noteSearchMode);
+                                if (noteSearchMode === "sxkd") {
+                                  setIsSxkdExpanded(true);
+                                  setIsDtxdExpanded(false);
+                                } else {
+                                  setIsDtxdExpanded(true);
+                                  setIsSxkdExpanded(false);
+                                }
 
                                 if (
                                   searchQuery ||
